@@ -3,6 +3,7 @@
  * @param {number[]} newInterval
  * @return {number[][]}
  */
+// TODO would constructing a new array be faster than many splices?
 const insert = function (intervals, newInterval) {
     if (!intervals || intervals.length === 0) {
         return [newInterval];
