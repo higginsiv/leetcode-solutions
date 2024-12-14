@@ -7,4 +7,4 @@ https://leetcode.com/
 ```node ./pppp/pppp.js```
 
 ## Notes
-To enabled copilot, adjust settings in .vscode/settings.json
+To enable copilot, adjust settings in .vscode/settings.json
