@@ -18,11 +18,12 @@ const convertToTitle = function (columnNumber) {
             break;
         }
 
-        const remainder = columnNumber % base;
+        let quotient = Math.floor(columnNumber / base);
+        let remainder = columnNumber % base;
         if (remainder === 0) {
             remainder = 26;
+            quotient -= 1;
         }
-        const quotient = Math.floor(columnNumber / base);
 
         title = valToLetter.get(remainder) + title;
         columnNumber = quotient;
