@@ -3,6 +3,7 @@
  * @return {number}
  */
 const largestIsland = function (grid) {
+    const EMPTY = 'e';
     const DIR = [
         [0, 1],
         [1, 0],
@@ -10,6 +11,9 @@ const largestIsland = function (grid) {
         [-1, 0],
     ];
 
+    const islandGrid = Array.from({ length: grid.length }, () =>
+        Array(grid[0].length).fill(EMPTY)
+    );
     const islands = [];
     const water = [];
 
@@ -17,7 +21,7 @@ const largestIsland = function (grid) {
     for (let row = 0; row < grid.length; row++) {
         for (let col = 0; col < grid.length; col++) {
             if (grid[row][col] === 1) {
-                islands.push(flood(row, col));
+                islands.push(flood(row, col, islands.length));
             }
         }
     }
@@ -30,13 +34,6 @@ const largestIsland = function (grid) {
         return grid.length ** 2;
     }
 
-    islands.sort((a, b) => b.length - a.length);
-
-    let maxPossible = 1;
-    for (let i = 0; i < 4; i++) {
-        maxPossible += islands[i]?.length ?? 0;
-    }
-
     // loop through water and see how many islands it is touching. add up the mass of all neighboring islands
     let bestFound = 0;
     for (const current of water) {
@@ -47,36 +44,38 @@ const largestIsland = function (grid) {
             };
         });
 
-        const currBiggest =
-            islands.reduce((total, isle) => {
+        let currBiggest = 1;
+        let islandsTouching = [];
+        for (const neighbor of neighbors) {
+            if (
+                neighbor.row < 0 ||
+                neighbor.row >= grid.length ||
+                neighbor.col < 0 ||
+                neighbor.col >= grid.length
+            ) {
+                continue;
+            }
+            if (islandGrid[neighbor.row][neighbor.col] !== EMPTY) {
                 if (
-                    isle.some((point) => {
-                        for (let i = 0; i < neighbors.length; i++) {
-                            if (
-                                point.row === neighbors[i].row &&
-                                point.col === neighbors[i].col
-                            ) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    })
+                    !islandsTouching.includes(
+                        islandGrid[neighbor.row][neighbor.col]
+                    )
                 ) {
-                    return total + isle.length;
+                    currBiggest +=
+                        islands[islandGrid[neighbor.row][neighbor.col]].length;
+                    islandsTouching.push(
+                        islandGrid[neighbor.row][neighbor.col]
+                    );
                 }
-
-                return total;
-            }, 0) + 1;
+            }
+        }
 
         bestFound = Math.max(bestFound, currBiggest);
-        if (bestFound === maxPossible) {
-            break;
-        }
     }
 
     return bestFound;
 
-    function flood(row, col) {
+    function flood(row, col, islandId) {
         const points = [];
         const queue = [{ row, col }];
 
@@ -87,6 +86,7 @@ const largestIsland = function (grid) {
                 continue;
             }
 
+            islandGrid[current.row][current.col] = islandId;
             points.push(current);
 
             grid[current.row][current.col] = 2;
@@ -107,6 +107,7 @@ const largestIsland = function (grid) {
                 if (grid[nRow][nCol] === 1) {
                     queue.push({ row: nRow, col: nCol });
                 } else if (grid[nRow][nCol] === 0) {
+                    grid[nRow][nCol] = 2;
                     water.push({ row: nRow, col: nCol });
                 }
             }
