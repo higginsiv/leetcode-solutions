@@ -11,15 +11,12 @@ const smallestNumber = function (pattern) {
     }
 
     function smallest(pattern, current) {
-        console.log(pattern, current)
         if (pattern === '') {
-            console.log('hello')
             return current;
         }
 
         const firstChar = pattern[0];
         pattern = pattern.slice(1);
-        console.log(firstChar, pattern)
         let min;
         let max;
 
@@ -31,14 +28,12 @@ const smallestNumber = function (pattern) {
             max = parseInt(current[current.length - 1]) - 1;
         }
 
-        console.log(min, max, current)
         for (let i = min; i <= max; i++) {
-            if (current.indexOf(i.toString() !== -1)) {
-                console.log('ahhh', i)
+            if (current.indexOf(i.toString()) !== -1) {
                 continue;
             }
             const result = smallest(pattern, current + i);
-            console.log(result)
+
             if (result) {
                 return result;
             }
